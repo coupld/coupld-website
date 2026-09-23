@@ -1,0 +1,615 @@
+/* ==========================================================================
+   coupld — website
+   Palette sampled from the Figma redesign. No glass: every surface is either
+   solid or a flat tint. Nothing uses backdrop-filter.
+   ========================================================================== */
+
+:root{
+  --ink:#0a0a0a;
+  --paper:#f4f4f4;
+  --paper-2:#ececeb;
+  --panel:#2f2f2f;
+  --nest:#f5ece3;          /* Cove app ground, sampled from the Nest screens */
+
+  --purple:#6c42e1;
+  --purple-lift:#8b6bf0;
+
+  --lilac:#948ac2;
+  --plum:#453848;
+  --mauve:#7d6c80;
+
+  --berry:#5a3c77;
+  --chilli:#821c22;
+  --peach:#f8d884;
+
+  --muted:rgba(10,10,10,.58);
+  --hair:rgba(10,10,10,.14);
+
+  /* wide enough that on ordinary screens the content edge lands on the nav
+     gutter, so the wordmark lines up with the logo above it */
+  --wrap:1600px;
+  --gutter:clamp(20px,4vw,56px);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --navh:74px;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:90px}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:'Lato',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
+  /* `clip` not `hidden`: overflow-x:hidden forces overflow-y to compute to
+     auto, which turns body into a scroll container and stops position:sticky
+     working in Safari. `clip` still contains stray horizontal overflow but
+     leaves overflow-y visible, so the pinned bands keep working. */
+  font-size:17px;line-height:1.6;overflow-x:clip;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul{margin:0;padding:0;list-style:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{width:min(100% - (var(--gutter) * 2),var(--wrap));margin-inline:auto}
+.center{text-align:center}
+
+/* ---------- type ---------- */
+.display{font-weight:900;letter-spacing:-.04em;line-height:.92;margin:0}
+.display.xxl{font-size:clamp(3rem,9.5vw,8.4rem)}
+.display.xl{font-size:clamp(2.6rem,7.2vw,6rem)}
+.display.l{font-size:clamp(2.1rem,5vw,4rem)}
+.display .thin{font-weight:300}
+.body{font-size:clamp(1rem,1.1vw,1.1rem);color:var(--muted);margin:0}
+.body strong{color:var(--ink);font-weight:900}
+.lede{font-size:clamp(1.1rem,2vw,1.6rem);line-height:1.34;color:rgba(10,10,10,.74);margin:.7em 0 0;font-weight:400}
+
+/* ==========================================================================
+   scroll progress
+   ========================================================================== */
+.scroll-rail{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;pointer-events:none}
+.scroll-rail i{display:block;height:100%;width:0%;background:var(--purple)}
+
+/* ==========================================================================
+   nav — full bleed, square, hairline rule. No pill, no blur.
+   ========================================================================== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:var(--paper);
+  border-bottom:1px solid var(--hair);
+  transition:background .4s var(--ease),border-color .4s var(--ease);
+}
+.nav-inner{
+  display:flex;align-items:center;gap:28px;
+  padding:0 var(--gutter);height:var(--navh);
+  transition:height .45s var(--ease);
+}
+.nav.shrunk{--navh:56px}
+.nav.shrunk .nav-inner{height:var(--navh)}
+
+.brand{
+  font-family:'Poppins',sans-serif;font-weight:700;letter-spacing:-.05em;line-height:1;
+  font-size:clamp(1.3rem,1.8vw,1.6rem);margin-right:auto;color:var(--ink);
+  transition:color .45s var(--ease),font-size .45s var(--ease);
+}
+.nav.shrunk .brand{color:var(--purple);font-size:clamp(1.15rem,1.5vw,1.36rem)}
+.brand.small{font-size:1.3rem;margin-right:0}
+
+.links{display:flex;align-items:center;gap:clamp(16px,2.2vw,34px);font-size:.95rem}
+.links a{position:relative;padding:4px 0;color:rgba(10,10,10,.72);transition:color .3s ease}
+.links a::after{
+  content:"";position:absolute;left:0;right:0;bottom:-2px;height:1.5px;background:var(--purple);
+  transform:scaleX(0);transform-origin:right;transition:transform .4s var(--ease);
+}
+.links a:hover{color:var(--ink)}
+.links a:hover::after{transform:scaleX(1);transform-origin:left}
+/* current section */
+.links a.is-current{color:var(--purple);font-weight:700}
+.links a.is-current::after{transform:scaleX(1);transform-origin:left}
+
+.btn-wait{
+  display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;
+  padding:10px 22px;border-radius:999px;background:var(--ink);color:#fff;
+  font-size:.9rem;letter-spacing:.01em;
+  transition:background .45s var(--ease),transform .35s var(--ease),padding .45s var(--ease);
+}
+.btn-wait:hover{transform:translateY(-1px);background:var(--purple)}
+.nav.shrunk .btn-wait{background:var(--purple);padding:8px 20px}
+.nav.shrunk .btn-wait:hover{background:var(--purple-lift)}
+.btn-wait.solid{padding:15px 34px;font-size:1rem}
+.btn-wait.wide{width:100%;margin-top:6px}
+
+.burger{display:none;width:36px;height:32px;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+.burger i{display:block;width:19px;height:1.6px;background:var(--ink);transition:transform .4s var(--ease),background .4s}
+.nav.shrunk .burger i{background:var(--purple)}
+.burger[aria-expanded="true"] i:first-child{transform:translateY(3.3px) rotate(45deg)}
+.burger[aria-expanded="true"] i:last-child{transform:translateY(-3.3px) rotate(-45deg)}
+.mobile-menu{
+  display:none;flex-direction:column;gap:14px;padding:22px var(--gutter) 28px;
+  background:var(--paper);border-top:1px solid var(--hair);font-size:1.1rem;
+}
+.mobile-menu.open{display:flex}
+
+/* ==========================================================================
+   hero
+   ========================================================================== */
+.hero{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  justify-content:center;padding:calc(var(--navh) + 60px) 0 110px;
+}
+.wordmark{
+  font-family:'Poppins',sans-serif;font-weight:700;letter-spacing:-.055em;line-height:.98;
+  font-size:clamp(4.2rem,17vw,15rem);margin:0 0 .16em;display:flex;
+}
+.wordmark span{
+  display:inline-block;opacity:0;transform:translateY(.3em);
+  animation:letterIn .9s var(--ease) forwards;
+}
+.wordmark span:nth-child(1){animation-delay:.05s}
+.wordmark span:nth-child(2){animation-delay:.11s}
+.wordmark span:nth-child(3){animation-delay:.17s}
+.wordmark span:nth-child(4){animation-delay:.23s}
+.wordmark span:nth-child(5){animation-delay:.29s}
+.wordmark span:nth-child(6){animation-delay:.35s}
+@keyframes letterIn{to{opacity:1;transform:none}}
+.wordmark.is-ready span{animation:none;opacity:1;transform:none;transition:transform .5s var(--ease)}
+.wordmark.is-ready span:hover{transform:translateY(-.05em)}
+
+.tagline{
+  font-weight:900;letter-spacing:-.03em;line-height:1.1;margin:0 0 1.1em;
+  font-size:clamp(1.3rem,3.3vw,2.7rem);max-width:22ch;
+  opacity:0;animation:fadeUp .8s var(--ease) .5s forwards;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* "for those who want" is a quiet label; the phrase beneath it carries the
+   weight and rolls through the four wants */
+.want{
+  display:flex;flex-direction:column;align-items:flex-start;gap:.35em;
+  opacity:0;animation:fadeUp .8s var(--ease) .68s forwards;
+}
+.want-label{
+  font-size:clamp(.78rem,1vw,.92rem);letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(10,10,10,.45);
+}
+.rotator{
+  position:relative;display:block;width:100%;
+  height:1.3em;overflow:hidden;
+  font-size:clamp(1.5rem,3.6vw,2.9rem);font-weight:900;letter-spacing:-.035em;
+}
+.rot-item{
+  position:absolute;left:0;top:0;white-space:nowrap;line-height:1.3;
+  color:var(--purple);
+  opacity:0;visibility:hidden;transform:translateY(100%);
+  transition:opacity .34s var(--ease),transform .38s var(--ease),visibility .38s;
+}
+.rot-item.is-on{opacity:1;visibility:visible;transform:none}
+.rot-item.is-out{opacity:0;visibility:hidden;transform:translateY(-100%)}
+/* a rule that resizes to whichever phrase is showing */
+.rot-rule{
+  position:absolute;left:0;bottom:0;height:2px;width:0;background:var(--purple);
+  transition:width .44s var(--ease);
+}
+
+.scroll-cue{
+  position:absolute;left:var(--gutter);bottom:38px;display:flex;align-items:center;gap:12px;
+  font-size:.76rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(10,10,10,.45);
+  opacity:0;animation:fadeUp .8s var(--ease) 1.1s forwards;
+}
+.scroll-cue i{width:54px;height:1px;background:rgba(10,10,10,.3);transform-origin:left;animation:cue 2.4s ease-in-out infinite}
+@keyframes cue{0%,100%{transform:scaleX(.35)}50%{transform:scaleX(1)}}
+
+/* ==========================================================================
+   manifesto
+   ========================================================================== */
+.manifesto{padding:clamp(80px,13vh,170px) 0}
+.reveal-lines .line{display:block;overflow:hidden;padding-bottom:.16em;margin-bottom:-.16em}
+.reveal-lines .line>span{display:block;transform:translateY(105%);transition:transform 1s var(--ease)}
+.reveal-lines.in .line>span{transform:none}
+.reveal-lines .line:nth-child(2)>span{transition-delay:.09s}
+.reveal-lines .line:nth-child(3)>span{transition-delay:.18s}
+.manifesto .ghost>span{font-weight:300;color:transparent;-webkit-text-stroke:1.4px rgba(10,10,10,.5)}
+
+/* ==========================================================================
+   five
+   ========================================================================== */
+.five{
+  display:grid;grid-template-columns:1.02fr .98fr;grid-template-rows:auto auto;
+  gap:clamp(26px,3.4vw,52px) clamp(30px,5vw,80px);align-items:center;
+  padding:0 0 clamp(80px,12vh,150px);
+}
+.five-copy{grid-column:1;grid-row:1}
+.phone-wrap{grid-column:2;grid-row:1/span 2;align-self:center;display:grid;place-items:center}
+.five-note{grid-column:1;grid-row:2;align-self:start}
+
+.five-copy .display .huge{display:block;font-size:clamp(3rem,7.2vw,6.2rem);line-height:.88;font-weight:900;letter-spacing:-.045em}
+.five-copy .display .mid{display:block;font-size:clamp(1.1rem,2.3vw,2rem);font-weight:700;letter-spacing:-.02em;padding:.14em 0}
+.five-copy .body{margin-top:1.4em;max-width:34ch}
+
+.phone{width:min(100%,320px);border-radius:36px;overflow:hidden;box-shadow:0 40px 80px -34px rgba(0,0,0,.45)}
+
+.five-note{
+  padding:clamp(22px,2.6vw,32px);border-radius:18px;
+  background:var(--paper-2);border:1px solid var(--hair);
+}
+.five-note p{margin:0;font-size:clamp(1rem,1.3vw,1.2rem);line-height:1.5}
+.five-note strong{font-weight:900}
+
+/* ==========================================================================
+   photographic bands
+   ========================================================================== */
+.band{position:relative;height:clamp(230px,26vw,430px);overflow:hidden;background:var(--ink)}
+
+/* a pinned band: it sticks under the nav and the section content scrolls up
+   over it, so the photograph holds still while you read */
+.band-media{position:absolute;inset:-12% 0}
+.band-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.06);will-change:transform}
+.band-group .band-media img{filter:grayscale(1) brightness(.78) contrast(1.12)}
+.band-plinth{
+  position:absolute;left:50%;bottom:0;z-index:2;transform:translateX(-50%);
+  width:min(58vw,820px);height:30%;background:var(--paper);
+  clip-path:polygon(0 100%,0 58%,17% 58%,17% 22%,83% 22%,83% 58%,100% 58%,100% 100%);
+}
+.band-2 .band-plinth{width:min(48vw,640px)}
+
+/* ==========================================================================
+   Pinned scroll scenes
+
+   Three zones, all inside one sticky stage that holds for the length of the
+   scene:
+     1  .scene-band   the photograph and its stair plinth — never moves
+     2  .scene-head   the heading — collapses away as you scroll in
+     3  .scene-deck   the cards — each one replaced by the next
+   Scroll progress through .scene drives all three from main.js.
+   ========================================================================== */
+.scene{position:relative;height:calc(100vh + var(--steps,3) * 44vh)}
+.scene-stage{
+  position:sticky;top:56px;height:calc(100vh - 56px);
+  display:flex;flex-direction:column;overflow:hidden;background:var(--paper);
+  contain:layout paint;
+}
+
+/* 1 — holds */
+.scene-band{flex:0 0 auto;height:clamp(180px,32vh,360px)}
+
+/* 2 — collapses */
+.scene-head{
+  flex:0 0 auto;overflow:hidden;
+  padding:clamp(18px,2.6vh,34px) var(--gutter) 0;
+  transform-origin:top center;will-change:max-height,opacity;
+}
+.scene-head .display{margin:0}
+.scene-head .lede{margin:.4em 0 0}
+.scene-head.center{text-align:center}
+.scene-head.center .lede{margin-inline:auto}
+.scene-head .meet{font-weight:300;letter-spacing:-.02em;text-align:center}
+.scene-head .meet b{font-weight:900;letter-spacing:-.045em}
+
+/* progress rail between the heading and the deck */
+.scene-rail{flex:0 0 auto;padding-top:clamp(12px,1.8vh,22px)}
+.steps{display:flex;gap:8px;justify-content:center}
+.steps i{
+  display:block;width:46px;height:3px;border-radius:2px;background:rgba(10,10,10,.16);
+  transition:background .45s var(--ease),width .45s var(--ease);
+}
+.steps i.is-on{background:var(--purple);width:64px}
+.steps i{transition:background .25s var(--ease),width .25s var(--ease)}
+
+.tabs{
+  position:relative;display:flex;flex-wrap:wrap;justify-content:center;gap:clamp(12px,3vw,46px);
+  padding-bottom:14px;border-bottom:1px solid var(--hair);
+}
+.tab{font-size:clamp(.88rem,1.1vw,1.06rem);color:var(--muted);padding:4px 2px;transition:color .3s ease}
+.tab:hover{color:var(--ink)}
+.tab.is-active{color:var(--ink);font-weight:900}
+.tab-ink{position:absolute;bottom:-1px;height:2px;background:var(--purple);transition:left .5s var(--ease),width .5s var(--ease)}
+
+/* 3 — the deck: one card replaced by the next */
+.scene-deck{
+  position:relative;flex:1 1 auto;min-height:0;
+  margin-top:clamp(14px,2vh,26px);padding-bottom:clamp(18px,2.6vh,34px);
+}
+.scene-deck{overflow:hidden}
+/* Cards are a stack. Each one slides up from the bottom edge over the card
+   before it, driven continuously by scroll rather than a discrete swap, so the
+   incoming card is visibly travelling rather than appearing. No transform
+   transition: the scroll position *is* the animation. */
+.deck-card{
+  position:absolute;inset:0;overflow:hidden;
+  transform:translate3d(0,100%,0);
+  will-change:transform;backface-visibility:hidden;
+}
+.deck-card.is-on{}
+
+/* matchmaker panel as a deck card.
+   The image column is a fixed track and the image is bounded on both axes:
+   `height:100%` alone resolves against an auto-height parent and the shot
+   blows out of the card. */
+.panel.deck-card{
+  display:grid;grid-template-columns:clamp(150px,24%,290px) 1fr;align-items:center;
+  gap:clamp(20px,3.4vw,52px);padding:clamp(20px,2.4vw,36px);
+  border-radius:22px;background:var(--panel);color:#fff;
+}
+.panel-shot{height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+.panel-shot img{
+  max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+  border-radius:12px;box-shadow:0 24px 50px -24px rgba(0,0,0,.8);
+}
+.panel-copy h3{margin:0 0 .5em;font-size:clamp(1.3rem,2.3vw,2rem);font-weight:900;letter-spacing:-.03em;line-height:1.08}
+.panel-copy p{margin:0;font-size:clamp(.95rem,1.05vw,1.05rem);line-height:1.5;color:rgba(255,255,255,.82);max-width:46ch}
+
+/* relationship cards as deck cards */
+.deck-card.sc-dark,.deck-card.sc-lilac,.deck-card.sc-plum,.deck-card.sc-mauve{
+  border-radius:24px;padding:clamp(24px,3vw,44px);
+}
+.deck-card h3{margin:0 0 .5em;font-size:clamp(1.25rem,2.2vw,1.9rem);font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.deck-card p{margin:0;font-size:clamp(.95rem,1.05vw,1.04rem);line-height:1.55;max-width:60ch}
+.sc-dark{display:grid;grid-template-columns:clamp(140px,22%,270px) 1fr;gap:clamp(22px,3.4vw,50px);align-items:center;background:var(--panel);color:#fff}
+.sc-dark p{color:rgba(255,255,255,.84)}
+.sc-dark strong{color:#fff;font-weight:900}
+.sc-shot{height:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+.sc-shot img{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;border-radius:12px;box-shadow:0 22px 46px -22px rgba(0,0,0,.8)}
+.sc-lilac{background:var(--lilac);color:#fff}
+.sc-plum{background:var(--plum);color:#fff}
+.sc-mauve{background:var(--mauve);color:#fff}
+.sc-lilac p,.sc-mauve p{color:rgba(255,255,255,.9)}
+.sc-plum p{color:rgba(255,255,255,.82)}
+.deck-card.sc-lilac .sc-copy,.deck-card.sc-plum .sc-copy,.deck-card.sc-mauve .sc-copy{
+  max-width:62ch;margin-left:auto;align-self:center;
+}
+.deck-card.sc-lilac,.deck-card.sc-plum,.deck-card.sc-mauve{display:grid;align-items:center}
+
+/* inbetweens cards: number left, title right, rule, then the copy directly
+   beneath it and a full-height image on the right. The copy sits at the top
+   rather than the bottom — stranded at the bottom of a fixed-height stage it
+   left a void above it and read as an afterthought. */
+.deck-card.g-card{
+  display:flex;flex-direction:column;
+  background:var(--paper);padding:0;
+}
+.g-card header{
+  display:flex;align-items:baseline;justify-content:space-between;gap:20px;
+  padding-bottom:clamp(12px,1.6vh,20px);border-bottom:1px solid var(--hair);
+}
+.g-num{font-size:clamp(1.1rem,1.8vw,1.7rem);font-weight:900;letter-spacing:-.02em;color:var(--purple)}
+.g-card h3{margin:0;font-size:clamp(1.3rem,2.8vw,2.4rem);font-weight:900;letter-spacing:-.03em;text-align:right}
+.g-body{
+  flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  /* 1fr, not auto: an auto row sizes to its content, so the image would only
+     be as tall as the paragraph instead of filling the card */
+  grid-template-rows:1fr;
+  gap:clamp(28px,4.5vw,80px);align-items:stretch;padding-top:clamp(18px,2.6vh,34px);
+}
+.g-card p{
+  margin:0;align-self:start;max-width:44ch;
+  color:rgba(10,10,10,.8);
+  font-size:clamp(1.04rem,1.32vw,1.26rem);line-height:1.58;
+}
+/* a short accent rule gives the copy a starting point for the eye */
+.g-card p::before{
+  content:"";display:block;width:46px;height:2px;background:var(--purple);
+  margin-bottom:clamp(14px,2.2vh,24px);
+}
+.g-art{height:100%;min-height:0;display:flex;align-items:stretch;justify-content:flex-end}
+.g-art img{
+  height:100%;width:auto;max-width:100%;object-fit:cover;
+  border-radius:14px;filter:grayscale(1);
+}
+
+/* ==========================================================================
+   safety — flat translucent tint panels over the photograph.
+   Resting state shows the category; hovering swaps in the measures.
+   ========================================================================== */
+/* the pinned scene above ends flush, so this heading needs its own top
+   padding or it butts straight against the card. Matches the rhythm of
+   .sec-head and .waitlist, which follow the other two scenes. */
+.safety-head{padding:clamp(70px,11vh,150px) 0 clamp(30px,4.5vh,56px)}
+.safety{position:relative;overflow:hidden;padding:clamp(46px,7vw,104px) 0;background:var(--ink);margin-bottom:clamp(80px,12vh,150px)}
+.safety-media{position:absolute;inset:-12% 0}
+.safety-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) brightness(.62);will-change:transform}
+.safety-grid{position:relative;display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(16px,2.2vw,28px)}
+
+.s-card{
+  position:relative;display:grid;border-radius:18px;padding:clamp(24px,3vw,40px);
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.14);
+  color:#fff;outline:none;
+  transition:background .5s var(--ease),border-color .5s var(--ease),transform .5s var(--ease);
+}
+.s-card:hover,.s-card:focus-visible{background:rgba(10,10,10,.62);border-color:rgba(255,255,255,.26);transform:translateY(-4px)}
+.s-card:focus-visible{outline:2px solid var(--purple-lift);outline-offset:3px}
+
+/* both states share one grid cell so the card never resizes on hover */
+.s-rest,.s-more{grid-area:1/1;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.s-rest h4{margin:0 0 .25em;font-size:clamp(1.15rem,2vw,1.7rem);font-weight:900;letter-spacing:-.03em;color:var(--purple-lift)}
+.s-rest p{margin:0;font-size:clamp(.98rem,1.3vw,1.18rem);color:rgba(255,255,255,.92)}
+.s-more{opacity:0;transform:translateY(8px);pointer-events:none;align-self:center}
+/* each measure is its own row, separated by a hairline and marked with a
+   ticked chip: these are things the app already does for you, so a check
+   reads truer than a dash, and a tinted chip holds up over the photograph
+   where a thin rule was getting lost */
+.s-more li{
+  display:grid;grid-template-columns:auto 1fr;gap:.8em;align-items:start;
+  padding:.5em 0;
+  font-size:clamp(.86rem,1vw,.96rem);line-height:1.45;color:rgba(255,255,255,.94);
+}
+.s-more li+li{border-top:1px solid rgba(255,255,255,.13)}
+.s-more li::before{
+  content:"";width:1.28em;height:1.28em;margin-top:.02em;border-radius:.4em;
+  background:rgba(139,107,240,.22)
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23cbbcff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E")
+    center/60% no-repeat;
+  border:1px solid rgba(139,107,240,.55);
+}
+.s-card:hover .s-rest,.s-card:focus-visible .s-rest{opacity:0;transform:translateY(-8px)}
+.s-card:hover .s-more,.s-card:focus-visible .s-more{opacity:1;transform:none}
+
+/* ==========================================================================
+   lanes
+   ========================================================================== */
+.lanes{padding:0 0 clamp(80px,12vh,150px)}
+.lanes-head{display:grid;grid-template-columns:1.12fr .88fr;gap:clamp(24px,5vw,70px);align-items:start;margin-bottom:clamp(50px,8vh,100px)}
+.lanes-side{padding-top:.5em}
+.lanes-side .body{max-width:44ch}
+.quiz-link{
+  display:inline-block;margin-top:1.6em;font-weight:900;letter-spacing:.02em;line-height:1.4;
+  font-size:clamp(.92rem,1.1vw,1.02rem);border-bottom:2px solid var(--purple);padding-bottom:4px;
+  transition:color .35s var(--ease);
+}
+.quiz-link:hover{color:var(--purple)}
+
+.choose{
+  text-align:center;margin:0 0 clamp(28px,4vh,48px);
+  font-size:clamp(1.6rem,3.2vw,2.6rem);font-weight:400;letter-spacing:-.02em;
+}
+.lane-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(18px,2.6vw,38px)}
+.lane{cursor:pointer;outline:none}
+.lane header{text-align:center;margin-bottom:14px}
+.lane h4{margin:0;font-size:clamp(1.25rem,2.1vw,1.85rem);font-weight:900;letter-spacing:-.03em}
+.lane header p{margin:.1em 0 0;font-size:clamp(.9rem,1.1vw,1.02rem);color:var(--muted)}
+.lane-card{
+  position:relative;aspect-ratio:3/4.1;border-radius:14px;overflow:hidden;
+  transition:transform .6s var(--ease),box-shadow .6s var(--ease);
+}
+.lane-card img{width:100%;height:100%;object-fit:cover;transition:transform 1s var(--ease)}
+.lane-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.42));transition:background .5s var(--ease)}
+.lane-copy{
+  position:absolute;left:0;right:0;top:8%;padding:0 clamp(14px,1.6vw,24px);margin:0;
+  color:#fff;font-size:clamp(1rem,1.5vw,1.38rem);line-height:1.3;
+  opacity:0;transform:translateY(14px);transition:opacity .5s var(--ease),transform .5s var(--ease);
+}
+.lane-cue{
+  position:absolute;right:14px;bottom:12px;width:30px;height:30px;border-radius:50%;
+  display:grid;place-items:center;color:#fff;font-size:1.1rem;line-height:1;
+  border:1px solid rgba(255,255,255,.55);transition:transform .5s var(--ease),background .4s var(--ease);
+}
+.lane:hover .lane-card{transform:translateY(-8px)}
+.lane:hover .lane-card img{transform:scale(1.05)}
+.lane:focus-visible .lane-card{outline:2px solid var(--purple);outline-offset:4px}
+
+/* the copy is revealed on hover; .is-open is the same state for touch and keyboard */
+.lane:hover .lane-veil,
+.lane:focus-visible .lane-veil,
+.lane.is-open .lane-veil{background:linear-gradient(180deg,rgba(0,0,0,.66),rgba(0,0,0,.5))}
+.lane:hover .lane-copy,
+.lane:focus-visible .lane-copy,
+.lane.is-open .lane-copy{opacity:1;transform:none}
+.lane:hover .lane-cue,
+.lane:focus-visible .lane-cue,
+.lane.is-open .lane-cue{transform:rotate(45deg);background:var(--purple)}
+.lane[data-lane="peach"]:hover .lane-veil,
+.lane[data-lane="peach"].is-open .lane-veil{background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(0,0,0,.44))}
+
+/* ==========================================================================
+   Cove
+   ========================================================================== */
+.sec-head{padding:clamp(70px,11vh,150px) 0 clamp(36px,5vh,70px)}
+.sec-head .display{border-bottom:1px solid var(--hair);padding-bottom:.16em}
+.sec-head.center .display{border-bottom:0;padding-bottom:0}
+.sec-head .lede{max-width:34ch}
+.sec-head.center .lede{margin-inline:auto}
+
+.cove-rows{padding-bottom:clamp(70px,11vh,150px);display:grid;gap:clamp(50px,8vh,110px)}
+.cove-row{display:grid;grid-template-columns:1fr .85fr;gap:clamp(28px,5vw,80px);align-items:center}
+.cove-row:nth-child(even) .cove-copy{order:2}
+.cove-row:nth-child(even) .cove-art{order:1}
+.cove-copy h3{margin:0 0 .6em;font-size:clamp(1.4rem,2.6vw,2.1rem);font-weight:900;letter-spacing:-.03em;line-height:1.12}
+.cove-copy p{margin:0;font-size:clamp(1rem,1.2vw,1.14rem);line-height:1.62;color:var(--muted);max-width:56ch}
+/* the Cove screens themselves, on a tile in the app's own cream so each phone
+   sits on its native ground rather than floating on the page */
+.cove-art{
+  position:relative;width:100%;max-width:300px;margin-left:auto;
+  border-radius:26px;overflow:hidden;background:var(--nest);
+  box-shadow:0 34px 64px -32px rgba(0,0,0,.42);
+  will-change:transform;
+}
+.cove-row:nth-child(even) .cove-art{margin-left:0;margin-right:auto}
+.cove-art img{width:100%;height:auto;display:block}
+
+/* ==========================================================================
+   waitlist + footer
+   ========================================================================== */
+.waitlist{padding:clamp(70px,11vh,150px) 0 clamp(90px,13vh,170px);border-top:1px solid var(--hair)}
+.waitlist .lede{margin-inline:auto;max-width:52ch}
+.wl-form{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin-top:2.4em}
+.wl-form input{
+  flex:1 1 300px;max-width:400px;padding:15px 22px;border-radius:999px;
+  border:1px solid rgba(10,10,10,.2);background:#fff;font:inherit;
+  transition:border-color .3s ease,box-shadow .3s ease;
+}
+.wl-form input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(108,66,225,.18)}
+.wl-msg{margin:1.1em 0 0;min-height:1.4em;font-size:.98rem;color:var(--purple)}
+
+.foot{background:var(--ink);color:#fff;padding:clamp(40px,6vh,70px) 0}
+.foot-inner{display:flex;flex-wrap:wrap;align-items:center;gap:20px;justify-content:space-between}
+.foot .brand{color:#fff}
+.foot .links a{color:rgba(255,255,255,.7)}
+.foot .links a:hover{color:#fff}
+.foot-tag{margin:0;font-size:.95rem;color:rgba(255,255,255,.5)}
+
+/* ==========================================================================
+   reveal
+   ========================================================================== */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+
+/* ==========================================================================
+   responsive
+   ========================================================================== */
+@media (max-width:1080px){
+  .five{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+  .five-copy{grid-column:1;grid-row:1}
+  .phone-wrap{grid-column:2;grid-row:1/span 2}
+  .five-note{grid-column:1;grid-row:2}
+  .lanes-head{grid-template-columns:1fr}
+  .panel{grid-template-columns:1fr}
+  .panel-shot{max-width:330px;margin-inline:auto}
+  .sc-dark{grid-template-columns:1fr}
+  .sc-shot{max-width:300px}
+  .cove-row{grid-template-columns:1fr}
+  .cove-row:nth-child(even) .cove-copy{order:0}
+  .cove-row:nth-child(even) .cove-art{order:0}
+  .cove-art,.cove-row:nth-child(even) .cove-art{margin-inline:0;max-width:280px}
+}
+@media (max-width:820px){
+  :root{--navh:60px}
+  .nav .links,.nav .btn-wait{display:none}
+  .nav .mobile-menu .btn-wait{display:inline-flex}
+  .burger{display:flex}
+  .five{grid-template-columns:1fr;grid-template-rows:none}
+  .five-copy,.five-note,.phone-wrap{grid-column:1;grid-row:auto}
+  .phone-wrap{order:-1}
+  .safety-grid{grid-template-columns:1fr}
+  .lane-grid{grid-template-columns:1fr;max-width:420px;margin-inline:auto}
+  .tabs{gap:12px}
+
+  /* scenes unpin on small screens: a viewport-height stage with a two-column
+     card is unreadable on a phone, so the zones simply stack and scroll */
+  .scene{height:auto!important}
+  .scene-stage{position:static;height:auto;overflow:visible}
+  .scene-head{max-height:none!important;opacity:1!important;padding-top:clamp(20px,4vw,32px)!important}
+  .scene-rail{display:none}
+  .scene-deck{position:static;display:grid;gap:16px;padding-bottom:clamp(40px,8vw,70px)}
+  .deck-card{position:relative;inset:auto;opacity:1!important;visibility:visible!important;transform:none!important}
+  .panel.deck-card,.sc-dark{grid-template-columns:1fr}
+  .panel-shot,.sc-shot{height:auto;max-width:280px;margin-inline:auto}
+  .panel-shot img,.sc-shot img{max-height:none}
+  .deck-card.sc-lilac .sc-copy,.deck-card.sc-plum .sc-copy,.deck-card.sc-mauve .sc-copy{margin-left:0}
+  .g-card header{flex-direction:column;align-items:flex-start;gap:4px}
+  .g-card h3{text-align:left}
+  .g-body{grid-template-columns:1fr;grid-template-rows:auto;align-items:start;gap:22px}
+  .g-art{height:auto;justify-content:flex-start}
+  .g-art img{height:auto;max-height:none;max-width:280px}
+  .deck-card.g-card{padding-bottom:10px}
+  .stack-card{position:relative;top:auto}
+  .g-card header{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:26px}
+  .g-card h3{text-align:left}
+  .foot-inner{flex-direction:column;text-align:center}
+  .links{flex-wrap:wrap;justify-content:center}
+  .scroll-cue{display:none}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  .reveal,.reveal-lines .line>span{opacity:1!important;transform:none!important}
+  .stack-card{position:relative;top:auto}
+}
