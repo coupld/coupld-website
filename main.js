@@ -363,6 +363,15 @@
       if (state) { msg.classList.add(state); }
     }
 
+    var codeBox = document.getElementById('wlCode');
+    var codeVal = document.getElementById('wlCodeValue');
+
+    function showCode(code) {
+      if (!codeBox || !code) { return; }
+      codeVal.textContent = code;
+      codeBox.hidden = false;
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (sending) { return; }
@@ -381,16 +390,23 @@
       fetch(WAITLIST_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email, source: 'marketing' })
+        body: JSON.stringify({ email: email })
       }).then(function (res) {
-        if (res.status === 409) {
-          setMsg("You're already on the list. We'll be in touch.", 'is-ok');
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          // The referral code is generated server side and emailed. Showing it
+          // here too means a signup is not stranded if the email is slow or
+          // lands in spam.
+          if (res.status === 409) {
+            setMsg("You're already on the list. We'll be in touch.", 'is-ok');
+            showCode(data.referral_code);
+            form.reset();
+            return;
+          }
+          if (!res.ok) { throw new Error('status ' + res.status); }
+          setMsg("You're on the list. Check your inbox for a confirmation.", 'is-ok');
+          showCode(data.referral_code);
           form.reset();
-          return;
-        }
-        if (!res.ok) { throw new Error('status ' + res.status); }
-        setMsg("You're on the list. Check your inbox for a confirmation.", 'is-ok');
-        form.reset();
+        });
       }).catch(function () {
         // keep what they typed so they do not have to retype it
         setMsg('Something went wrong. Please try again, or email hello@coupld.ai', 'is-error');
