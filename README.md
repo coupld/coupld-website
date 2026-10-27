@@ -192,6 +192,10 @@ deliberate departures:
   shown at 435px, so roughly a 2.4x upscale. They came out of the source PDF at
   that size. Re-export them from the original artwork at 870x1190.
 - The waitlist form is front end only. It validates and confirms locally; wire
-  it to a real endpoint, and point "TAKE OUR 2-MINUTE QUIZ" at the real quiz.
+  it to a real endpoint.
+- **Every footer link points at a path that does not exist yet.** The structure
+  follows what Tinder and Hinge carry (Company, Support, Legal, social), but
+  `/privacy`, `/terms`, `/about` and the rest will 404 until those pages are
+  built. The social handles assume `@coupld` on each platform.
 - No Open Graph or Twitter card tags and no share image, so the link previews
-  bare. No privacy policy, terms or contact in the footer.
+  bare.
