@@ -185,23 +185,21 @@ deliberate departures:
 
 ```
 form  ->  POST https://yosszmgeheimxcowbwvf.supabase.co/functions/v1/waitlist
-          { "email": "..." }
+          { "email": "...", "source": "marketing" }
           |
           +-- 200  inserted, Resend confirmation sent by the function
           +-- 409  already on the list
           +-- 4xx/5xx/network  error shown, typed address kept
 ```
 
-The endpoint is shared with the pitch site. Changing its behaviour affects
-both. To distinguish signups by origin, add a `source` column:
+The endpoint is shared with the pitch site, so changing its behaviour affects
+both. `source` records which site a signup came from: this site sends
+`marketing`, the pitch site sends nothing and falls back to `pitch`. The
+function whitelists the value rather than trusting the body, and a check
+constraint on the column backs that up, because the endpoint is public.
 
-```sql
-alter table public.waitlist
-  add column if not exists source text not null default 'pitch';
-```
-
-then have the edge function read `body.source` and pass it to the insert, and
-send `source: 'marketing'` from this site.
+`waitlist` has RLS enabled with no policies, so `anon` and `authenticated`
+cannot read it at all. Only the service role inside the Edge Function can.
 
 ## Known gaps
 
@@ -218,8 +216,6 @@ send `source: 'marketing'` from this site.
   owns the insert and fires the Resend confirmation itself, so this site sends
   no email of its own. A 409 means the address is already on the list, which
   is treated as success for the visitor.
-- **Both sites now write to the same `waitlist` table with no way to tell them
-  apart.** Adding a `source` column is the obvious fix; see Waitlist below.
 - **Every footer link points at a path that does not exist yet.** The structure
   follows what Tinder and Hinge carry (Company, Support, Legal, social), but
   `/privacy`, `/terms`, `/about` and the rest will 404 until those pages are

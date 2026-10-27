@@ -381,7 +381,7 @@
       fetch(WAITLIST_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email })
+        body: JSON.stringify({ email: email, source: 'marketing' })
       }).then(function (res) {
         if (res.status === 409) {
           setMsg("You're already on the list. We'll be in touch.", 'is-ok');
