@@ -18,15 +18,6 @@ no-store`, so edits to the stylesheet or script show up on a normal reload.
 With the plain module the browser caches `index.html` itself and you end up
 debugging a stale page — which is easy to mistake for a fix not working.
 
-## Deployment
-
-Pushing to `main` publishes the site to GitHub Pages via
-`.github/workflows/deploy.yml`. There is no build step: the repository root is
-uploaded as-is, so `index.html` must stay at the root alongside `assets/`.
-
-`CNAME` pins the custom domain and `.nojekyll` stops GitHub running the files
-through Jekyll. Both need to remain at the root or the deployment breaks.
-
 ## Files
 
 The stylesheet and script are loaded with a `?v=` cache-buster. Bump it when
@@ -192,11 +183,15 @@ deliberate departures:
 
 ## Known gaps
 
-- **The Inbetweens photography is stand-in.** The group band reference in the
-  Figma was only 650px wide with the plinth baked in, so it was replaced with a
-  licensed Pexels studio shot, desaturated and toned to sit with the other
-  bands. The three process-row images (`gather-out`, `gather-loud`,
-  `gather-together`) are also Pexels, cropped to 3:4 and desaturated. Swap all
-  four for the real shoot when it exists.
+- **Some imagery is AI-generated, not photographed.** The three Relationship
+  mode app screens and the four Everything Inbetween photographs were generated
+  with Higgsfield (`gpt-image-2.5`), the app screens using an existing
+  screenshot as a style reference. They are placeholders for a real prototype
+  and a real shoot.
+- **Berry and Chilli lane photos are low resolution** — 285px and 300px wide,
+  shown at 435px, so roughly a 2.4x upscale. They came out of the source PDF at
+  that size. Re-export them from the original artwork at 870x1190.
 - The waitlist form is front end only. It validates and confirms locally; wire
   it to a real endpoint, and point "TAKE OUR 2-MINUTE QUIZ" at the real quiz.
+- No Open Graph or Twitter card tags and no share image, so the link previews
+  bare. No privacy policy, terms or contact in the footer.
