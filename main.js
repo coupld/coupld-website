@@ -341,21 +341,63 @@
     });
   }
 
-  /* ---------- waitlist form (front end only) ---------- */
+  /* ---------- waitlist ----------
+     Posts to the same Supabase edge function the pitch site uses. That
+     function inserts the row and fires the Resend confirmation itself, so
+     there is nothing to send from here. 409 means the address is already on
+     the list, which is a success for the visitor, not an error. */
+  var WAITLIST_ENDPOINT = 'https://yosszmgeheimxcowbwvf.supabase.co/functions/v1/waitlist';
+
   var form = document.getElementById('wlForm');
   var msg = document.getElementById('wlMsg');
+
   if (form) {
+    var input = document.getElementById('wlEmail');
+    var button = form.querySelector('button[type="submit"]');
+    var buttonLabel = button ? button.textContent : '';
+    var sending = false;
+
+    function setMsg(text, state) {
+      msg.textContent = text;
+      msg.classList.remove('is-error', 'is-ok');
+      if (state) { msg.classList.add(state); }
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
-      var input = document.getElementById('wlEmail');
-      var val = (input.value || '').trim();
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) {
-        msg.textContent = 'Please enter a valid email address.';
+      if (sending) { return; }
+
+      var email = (input.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setMsg('Please enter a valid email address.', 'is-error');
         input.focus();
         return;
       }
-      msg.textContent = "You're on the list. We'll be in touch.";
-      form.reset();
+
+      sending = true;
+      if (button) { button.disabled = true; button.textContent = 'Joining...'; }
+      setMsg('', null);
+
+      fetch(WAITLIST_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function (res) {
+        if (res.status === 409) {
+          setMsg("You're already on the list. We'll be in touch.", 'is-ok');
+          form.reset();
+          return;
+        }
+        if (!res.ok) { throw new Error('status ' + res.status); }
+        setMsg("You're on the list. Check your inbox for a confirmation.", 'is-ok');
+        form.reset();
+      }).catch(function () {
+        // keep what they typed so they do not have to retype it
+        setMsg('Something went wrong. Please try again, or email hello@coupld.ai', 'is-error');
+      }).then(function () {
+        sending = false;
+        if (button) { button.disabled = false; button.textContent = buttonLabel; }
+      });
     });
   }
 })();

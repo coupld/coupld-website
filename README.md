@@ -181,6 +181,28 @@ deliberate departures:
 - "your shared spacegrows alongside it" set as "your shared space grows".
 - Safety and Support were removed from the nav, as requested.
 
+## Waitlist
+
+```
+form  ->  POST https://yosszmgeheimxcowbwvf.supabase.co/functions/v1/waitlist
+          { "email": "..." }
+          |
+          +-- 200  inserted, Resend confirmation sent by the function
+          +-- 409  already on the list
+          +-- 4xx/5xx/network  error shown, typed address kept
+```
+
+The endpoint is shared with the pitch site. Changing its behaviour affects
+both. To distinguish signups by origin, add a `source` column:
+
+```sql
+alter table public.waitlist
+  add column if not exists source text not null default 'pitch';
+```
+
+then have the edge function read `body.source` and pass it to the insert, and
+send `source: 'marketing'` from this site.
+
 ## Known gaps
 
 - **Some imagery is AI-generated, not photographed.** The three Relationship
@@ -191,8 +213,13 @@ deliberate departures:
 - **Berry and Chilli lane photos are low resolution** — 285px and 300px wide,
   shown at 435px, so roughly a 2.4x upscale. They came out of the source PDF at
   that size. Re-export them from the original artwork at 870x1190.
-- The waitlist form is front end only. It validates and confirms locally; wire
-  it to a real endpoint.
+- The waitlist writes to the same Supabase project and edge function as the
+  pitch site (`yosszmgeheimxcowbwvf`, `/functions/v1/waitlist`). That function
+  owns the insert and fires the Resend confirmation itself, so this site sends
+  no email of its own. A 409 means the address is already on the list, which
+  is treated as success for the visitor.
+- **Both sites now write to the same `waitlist` table with no way to tell them
+  apart.** Adding a `source` column is the obvious fix; see Waitlist below.
 - **Every footer link points at a path that does not exist yet.** The structure
   follows what Tinder and Hinge carry (Company, Support, Legal, social), but
   `/privacy`, `/terms`, `/about` and the rest will 404 until those pages are

@@ -542,6 +542,9 @@ ul{margin:0;padding:0;list-style:none}
 }
 .wl-form input:focus{outline:none;border-color:var(--purple);box-shadow:0 0 0 3px rgba(108,66,225,.18)}
 .wl-msg{margin:1.1em 0 0;min-height:1.4em;font-size:.98rem;color:var(--purple)}
+.wl-msg.is-error{color:#b3261e}
+.wl-msg.is-ok{color:var(--purple);font-weight:700}
+.wl-form button[disabled]{opacity:.6;cursor:default}
 
 .foot{background:var(--ink);color:#fff;padding:clamp(54px,8vh,96px) 0 clamp(28px,4vh,44px)}
 .foot .brand{color:#fff}
