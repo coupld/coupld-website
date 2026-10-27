@@ -546,6 +546,22 @@ ul{margin:0;padding:0;list-style:none}
 .wl-msg.is-ok{color:var(--purple);font-weight:700}
 .wl-form button[disabled]{opacity:.6;cursor:default}
 
+.wl-code{
+  margin:1.6em auto 0;max-width:420px;
+  border:1px solid rgba(10,10,10,.14);border-radius:16px;
+  padding:clamp(20px,3vh,28px) 24px;text-align:center;background:rgba(255,255,255,.55);
+}
+.wl-code-label{
+  margin:0 0 .6em;font-size:.72rem;font-weight:900;letter-spacing:.17em;
+  text-transform:uppercase;color:rgba(10,10,10,.45);
+}
+.wl-code-value{
+  margin:0 0 .7em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  font-size:clamp(1.6rem,4vw,2rem);font-weight:700;letter-spacing:.18em;
+  color:var(--purple);
+}
+.wl-code-note{margin:0;font-size:.85rem;line-height:1.55;color:rgba(10,10,10,.55)}
+
 .foot{background:var(--ink);color:#fff;padding:clamp(54px,8vh,96px) 0 clamp(28px,4vh,44px)}
 .foot .brand{color:#fff}
 

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css?v=1793122977" />
+<link rel="stylesheet" href="styles.css?v=1793124692" />
 </head>
 <body>
 
@@ -422,7 +422,12 @@
       <input id="wlEmail" type="email" placeholder="you@example.com" autocomplete="email" required />
       <button type="submit" class="btn-wait solid">Join Waitlist</button>
     </form>
-    <p class="wl-msg" id="wlMsg" role="status"></p>
+    <p class="wl-msg" id="wlMsg" role="status" aria-live="polite"></p>
+    <div class="wl-code" id="wlCode" hidden>
+      <p class="wl-code-label">Your referral code</p>
+      <p class="wl-code-value" id="wlCodeValue"></p>
+      <p class="wl-code-note">Also in your confirmation email. Share it with someone who would get it.</p>
+    </div>
   </div>
 </section>
 
@@ -491,6 +496,6 @@
   </div>
 </footer>
 
-<script src="main.js?v=1793122977"></script>
+<script src="main.js?v=1793124692"></script>
 </body>
 </html>
